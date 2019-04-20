@@ -1,2 +1,2 @@
-# 16007167_INIM0038
+# pkpd_script
 Scripts for INIM0038 iBSc project
