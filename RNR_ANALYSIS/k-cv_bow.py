@@ -26,37 +26,24 @@ print('\n\n\nBoW')
 
 ################### 1) LOAD DATA
 
-bow_nofeats=pickle.load(open('bow_nofeats','rb'))
-bow_nofeats=pd.DataFrame(bow_nofeats.toarray())
+selected_bow=pickle.load(open('selected_bow','rb'))
+print(selected_bow.shape[1])
+print('^^ this shld be 55')
 
 csv = '/Users/cdw/Desktop/pkpd_script/RNR_ANALYSIS/ready_processed.csv'
 papers=pd.read_csv(csv)
 y = papers.loc[:,'category']
 
-x_train,x_test,y_train,y_test=train_test_split(bow_nofeats,y,test_size=0.15,random_state=61097,stratify=y)
-
-
-################# 2) FEATURE SELECTION
-
-print('model training...')
-model = XGBClassifier(learning_rate=1,
-					max_depth=3,
-					n_estimators=25,
-					random_state=61097).fit(x_train,y_train)
-print('model trained')
-selection = SelectFromModel(model, threshold=0.007, prefit=True)
-bow_nofeats = selection.transform(bow_nofeats)
-print(bow_nofeats.shape[1])
-print('^^^ that value should be 51')
 
 
 
 ############### 3) K-FOLD CROSS VALIDATION
 
+model=pickle.load(open('optimal_xgb_bow','rb'))
 skf = StratifiedKFold(n_splits=10, random_state=61097, shuffle=True)
 
 print('crossvalidating...')
-cv_scores = cross_val_score(model,bow_nofeats,y,cv=skf)
+cv_scores = cross_val_score(model,selected_bow,y,cv=skf)
 
 print('cross val scores:')
 print(cv_scores)
@@ -65,5 +52,5 @@ print(cv_scores)
 
 ###
 elapsed = time.time()-now
-print('\n\ntime elapsed: {}'.format(int(elapsed)))
+print('\n\ntime elapsed: {}s'.format(int(elapsed)))
 
